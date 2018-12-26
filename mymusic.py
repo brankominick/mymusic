@@ -2,8 +2,10 @@
 from __future__             import print_function
 import os
 import sys
+import numpy                as np
 import json
 import pandas               as pd
+import matplotlib.pyplot    as plt
 import spotipy
 import spotipy.util         as util
 from spotipy.oauth2         import SpotifyClientCredentials
@@ -114,8 +116,49 @@ October = fall.loc[fall['date_added'] == '2018-10']
 November = fall.loc[fall['date_added'] == '2018-11']
 December = fall.loc[fall['date_added'] == '2018-12']
 
+num_mths = ['03','04','05','06','07','08','09','10','11','12']
 mths = ['March','April','May','June','July','August','September','October','November','December']
 mus = [March,April,May,June,July,August,September,October,November,December]
 
+vals = []
 for i in range(len(mths)):
-    print("{} stats: \n{}".format(mths[i],mus[i].describe()))
+    #print("{} stats: \n{}".format(mths[i],mus[i].describe()))
+    vals.append([mus[i]['danceability'].mean(), mus[i]['energy'].mean(),
+    mus[i]['instrumentalness'].mean(), mus[i]['loudness'].mean(),
+    mus[i]['tempo'].mean(), mus[i]['valence'].mean()])
+
+#vals = [[danceability, energy, instrumentalness, loudness, tempo, valence]]
+
+barWidth = 0.15
+
+#bar heights
+danceability = [vals[i][0] for i in range(len(vals))]
+energy = [vals[i][1] for i in range(len(vals))]
+instrumentalness = [vals[i][2] for i in range(len(vals))]
+loudness = [vals[i][3] for i in range(len(vals))]
+tempo = [vals[i][4] for i in range(len(vals))]
+valence = [vals[i][5] for i in range(len(vals))]
+
+r1 = np.arange(len(danceability))
+r2 = [x + barWidth for x in r1]
+r3 = [x + barWidth for x in r2]
+r4 = [x + barWidth for x in r3]
+r5 = [x + barWidth for x in r4]
+r6 = [x + barWidth for x in r5]
+
+plt.bar(r1, danceability, color='blue', width=barWidth, edgecolor='white', label='danceability')
+plt.bar(r2, energy, color='red', width=barWidth, edgecolor='white', label='energy')
+plt.bar(r3, instrumentalness, color='green', width=barWidth, edgecolor='white', label='instrumentalness')
+#plt.bar(r4, loudness, color='orange', width=barWidth, edgecolor='white', label='loudness')
+#plt.bar(r5, tempo, color='purple', width=barWidth, edgecolor='white', label='tempo')
+plt.bar(r4, danceability, color='black', width=barWidth, edgecolor='white', label='valence')
+
+plt.xlabel('group', fontweight='bold')
+plt.xticks([r + barWidth for r in range(len(danceability))], num_mths)
+
+plt.legend()
+plt.show()
+
+#plt.figure()
+#plt.bar(loudness)
+#plt.xticks(num_mths)
